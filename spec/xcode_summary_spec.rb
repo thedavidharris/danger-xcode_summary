@@ -16,6 +16,25 @@ module Danger
         @xcode_summary = @dangerfile.xcode_summary
         @xcode_summary.env.request_source.pr_json = JSON.parse(File.read('spec/fixtures/pr_json.json'))
         @xcode_summary.project_root = '/Users/marcelofabri/SwiftLint/'
+
+        allow(@xcode_summary.git).to receive_messages(
+          renamed_files: [],
+          modified_files: [
+            'Carthage/Checkouts/Yams/Sources/Yams/Tag.swift',
+            'Carthage/Checkouts/Yams/Sources/Yams/Decoder.swift',
+            'Carthage/Checkouts/Yams/Sources/Yams/Node.swift',
+            'Carthage/Checkouts/Yams/Sources/Yams/Representer.swift',
+            'Carthage/Checkouts/Yams/Sources/Yams/Encoder.swift',
+            'Carthage/Checkouts/Yams/Sources/Yams/Parser.swift',
+            'Carthage/Checkouts/Yams/Sources/Yams/Constructor.swift',
+            'Carthage/Checkouts/SWXMLHash/Source/XMLIndexer+XMLIndexerDeserializable.swift',
+            'Carthage/Checkouts/Result/Result/NoError.swift',
+          ],
+          deleted_files: [],
+          added_files: [
+            'Source/SwiftLintFramework/Extensions/QueuedPrint.swift'
+          ]
+        )
       end
 
       it 'fail if file does not exist' do
@@ -26,6 +45,7 @@ module Danger
       context 'reporting' do
         it 'formats compile warnings' do
           @xcode_summary.report('spec/fixtures/swiftlint.xcresult')
+
           expect(@dangerfile.status_report[:warnings]).to eq [
             "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Sources/Yams/Tag.swift#L88'>Carthage/Checkouts/Yams/Sources/Yams/Tag.swift#L88</a>**: Legacy Hashing Violation: Prefer using the `hash(into:)` function instead of overriding `hashValue` (legacy_hashing)",
             "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Sources/Yams/Tag.swift#L109'>Carthage/Checkouts/Yams/Sources/Yams/Tag.swift#L109</a>**: Legacy Hashing Violation: Prefer using the `hash(into:)` function instead of overriding `hashValue` (legacy_hashing)",
@@ -39,12 +59,6 @@ module Danger
             "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Sources/Yams/Constructor.swift#L450'>Carthage/Checkouts/Yams/Sources/Yams/Constructor.swift#L450</a>**: Todo Violation: TODOs should be resolved (YAML supports Hashable element...). (todo)",
             "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Sources/Yams/Constructor.swift#L478'>Carthage/Checkouts/Yams/Sources/Yams/Constructor.swift#L478</a>**: Todo Violation: TODOs should be resolved (Should raise error if subnode ...). (todo)",
             "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Sources/Yams/Constructor.swift#L492'>Carthage/Checkouts/Yams/Sources/Yams/Constructor.swift#L492</a>**: Todo Violation: TODOs should be resolved (Should raise error if subnode ...). (todo)",
-            "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Sources/Yams/Emitter.swift#L340'>Carthage/Checkouts/Yams/Sources/Yams/Emitter.swift#L340</a>**: Todo Violation: TODOs should be resolved (Support tags). (todo)",
-            "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Tests/YamsTests/SpecTests.swift#L379'>Carthage/Checkouts/Yams/Tests/YamsTests/SpecTests.swift#L379</a>**: Todo Violation: TODOs should be resolved (YAML supports keys other than ...). (todo)",
-            "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Tests/YamsTests/SpecTests.swift#L714'>Carthage/Checkouts/Yams/Tests/YamsTests/SpecTests.swift#L714</a>**: Todo Violation: TODOs should be resolved (local tag parsing). (todo)",
-            "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Tests/YamsTests/EncoderTests.swift#L924'>Carthage/Checkouts/Yams/Tests/YamsTests/EncoderTests.swift#L924</a>**: Colon Violation: Colons should be next to the identifier when specifying a type and next to the key in dictionary literals. (colon)",
-            "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Tests/YamsTests/EncoderTests.swift#L937'>Carthage/Checkouts/Yams/Tests/YamsTests/EncoderTests.swift#L937</a>**: Colon Violation: Colons should be next to the identifier when specifying a type and next to the key in dictionary literals. (colon)",
-            "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Yams/Tests/YamsTests/EncoderTests.swift#L253'>Carthage/Checkouts/Yams/Tests/YamsTests/EncoderTests.swift#L253</a>**: Superfluous Disable Command Violation: 'unused_private_declaration' is not a valid SwiftLint rule. Please remove it from the disable command. (superfluous_disable_command)",
             "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/SWXMLHash/Source/XMLIndexer+XMLIndexerDeserializable.swift#L538'>Carthage/Checkouts/SWXMLHash/Source/XMLIndexer+XMLIndexerDeserializable.swift#L538</a>**: 'public' modifier is redundant for instance method declared in a public extension",
             "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/SWXMLHash/Source/XMLIndexer+XMLIndexerDeserializable.swift#L552'>Carthage/Checkouts/SWXMLHash/Source/XMLIndexer+XMLIndexerDeserializable.swift#L552</a>**: 'public' modifier is redundant for instance method declared in a public extension",
             "**<a href='https://github.com/realm/SwiftLint/blob/f211694e7def13785ff62047386437534541d7b3/Carthage/Checkouts/Result/Result/NoError.swift#L8'>Carthage/Checkouts/Result/Result/NoError.swift#L8</a>**: Will never be executed"
@@ -87,7 +101,7 @@ module Danger
 
         it 'report warning and error counts' do
           result = @xcode_summary.warning_error_count('spec/fixtures/build_error.xcresult')
-          expect(result).to eq '{"warnings":21,"errors":3}'
+          expect(result).to eq '{"warnings":15,"errors":3}'
         end
 
         context 'with inline_mode' do
@@ -164,12 +178,12 @@ module Danger
 
           it 'asserts no warnings' do
             @xcode_summary.report('spec/fixtures/swiftlint.xcresult')
-            expect(@dangerfile.status_report[:warnings].count).to eq 19
+            expect(@dangerfile.status_report[:warnings].count).to eq 13
           end
 
           it 'report warning and error counts' do
             result = @xcode_summary.warning_error_count('spec/fixtures/build_error.xcresult')
-            expect(result).to eq '{"warnings":19,"errors":1}'
+            expect(result).to eq '{"warnings":13,"errors":1}'
           end
         end
 
@@ -186,7 +200,7 @@ module Danger
 
           it 'report warning and error counts' do
             result = @xcode_summary.warning_error_count('spec/fixtures/build_error.xcresult')
-            expect(result).to eq '{"warnings":21,"errors":3}'
+            expect(result).to eq '{"warnings":15,"errors":3}'
           end
         end
       end

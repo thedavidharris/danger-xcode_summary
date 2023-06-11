@@ -229,6 +229,10 @@ module Danger
       ignored_files.any? { |pattern| File.fnmatch(pattern, path) }
     end
 
+    def should_include_warning?(path, files_to_include)
+      return files_to_include.include?(path)
+    end
+
     def escape_reason(reason)
       reason.gsub('>', '\>').gsub('<', '\<')
     end
@@ -238,6 +242,9 @@ module Danger
 
       path = result.location.file_path
       return nil if should_ignore_warning?(path)
+
+      files = (git.modified_files - git.deleted_files) + git.added_files
+      return nil unless should_include_warning?(path, files)
 
       path_link = format_path(path, result.location.line)
 
